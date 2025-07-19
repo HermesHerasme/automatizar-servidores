@@ -1,0 +1,38 @@
+---
+- name: Configurar servidores
+  hosts: servers
+  become: true
+  tasks:
+
+    - name: 1. Actualizar los paquetes de APT del sistema operativo
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: 2. Crear el usuario itla
+      user:
+        name: itla
+        state: present
+
+    - name: 3. Crear una carpeta llamada "app"
+      file:
+        path: /home/itla/app
+        state: directory
+        owner: itla
+        group: itla
+        mode: '0755'
+
+    - name: 4. Crear un archivo hola.txt en la carpeta app
+      copy:
+        content: "Hola desde Ansible\n"
+        dest: /home/itla/app/hola.txt
+        owner: itla
+        group: itla
+        mode: '0644'
+
+    - name: 5. Instalar la aplicación "cowsay" y "htop"
+      apt:
+        name:
+          - cowsay
+          - htop
+        state: present
